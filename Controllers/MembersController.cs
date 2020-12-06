@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Authentication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Authentication.Controllers
 {
+    
     public class MembersController : Controller
     {
         private readonly MembersContext _context;
@@ -19,12 +21,14 @@ namespace Authentication.Controllers
         }
 
         // GET: Members
+        [Authorize(Roles = "Administrator,Manager,User")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Parent.ToListAsync());
         }
 
         // GET: Members/Details/5
+        [Authorize(Roles = "Administrator,Manager,User")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,6 +47,7 @@ namespace Authentication.Controllers
         }
 
         // GET: Members/Create
+        [Authorize(Roles = "Administrator,Manager")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +58,7 @@ namespace Authentication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Manager")]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Address,City,State,Zip,Email,MobilePhone")] Members members)
         {
             if (ModelState.IsValid)
@@ -65,6 +71,7 @@ namespace Authentication.Controllers
         }
 
         // GET: Members/Edit/5
+        [Authorize(Roles = "Administrator,Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +92,7 @@ namespace Authentication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Manager")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Address,City,State,Zip,Email,MobilePhone")] Members members)
         {
             if (id != members.ID)
@@ -116,6 +124,7 @@ namespace Authentication.Controllers
         }
 
         // GET: Members/Delete/5
+        [Authorize(Roles = "Administrator,Manager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +145,7 @@ namespace Authentication.Controllers
         // POST: Members/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Manager")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var members = await _context.Parent.FindAsync(id);
